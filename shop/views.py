@@ -7,6 +7,7 @@ from django.views.generic.edit import *
 from .models import *
 from .forms import *
 from django.db import transaction
+from django.contrib import messages
 from django.http import HttpResponseRedirect
 # Create your views here.
 
@@ -97,15 +98,23 @@ class ProductBuy(LoginRequiredMixin, CreateView):
     form_class = BuyForm
 
     def form_valid(self, form):
-        purcase = form.save(commit=False)
-        purcase.user = self.request.user
-        purcase.product = Products.objects.get(pk=self.kwargs["pk"])
-        return super().form_valid(form=form)
+        try:
+            purcase = form.save(commit=False)
+            purcase.user = self.request.user
+            purcase.product = Products.objects.get(pk=self.kwargs["pk"])
+            purcase.save()
+            return HttpResponseRedirect(self.get_success_url())
+        except NotZeroCount as e:
+            return messages.error(self.request, "Заказ должень иметь хотя-бы одну позицию")
+        except NotMuchMoney as e:
+            return messages.error(self.request, "У вас недостаточно денег")
+        except NotMuchCount as e:
+            return messages.error(self.request, "У нас недостаточно продуктов")
+        finally:
+            return redirect(f"/product/about/{self.kwargs['pk']}")
+        
 
     def get_success_url(self):
         return "/".format(self.request.user.id)
-
-    def form_invalid(self):
-        return redirect(f"/product/about/{self.kwargs['pk']}")
 
 

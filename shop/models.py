@@ -1,7 +1,6 @@
 from django.db import models, transaction
 from django.contrib.auth.models import AbstractUser
-
-from django.core.exceptions import ValidationError
+from .exceptions import NotMuchCount, NotMuchMoney, NotZeroCount
 
 
 
@@ -28,11 +27,11 @@ class Purcase(models.Model):
 
     def save(self, *args, **kwargs):
         if self.quantity == 0:
-            raise ValidationError('Вы не ввели количество!')
+            raise NotZeroCount()
         elif self.quantity > self.product.quantity:
-            raise ValidationError('Такого количества на скаде нет!')
+            raise NotMuchCount()
         elif self.quantity * self.product.price > self.user.wallet:
-            raise ValidationError('Не достаточно денег!')
+            raise NotMuchMoney()
         elif self.product.quantity >= self.quantity and self.user.wallet >= (self.product.price * self.quantity):
             self.product.quantity -= self.quantity
             self.user.wallet -= self.product.price * self.quantity
