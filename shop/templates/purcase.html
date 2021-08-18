@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+        {% for purcase in object_list %}
+            {% if purcase.user == request.user %}
+                <div>
+                    <p>Товар: {{ purcase.product }}</p> 
+                    <p>Куплено: {{ purcase.quantity }}</p> 
+                </div>
+                <form method="post" action="{% url 'return'%}">
+                    {% csrf_token %}
+                    <input type="hidden" name="product_id" value="{{purcase.pk}}">
+                    <button type="submit" value="return">Вернуть товар</button>
+                </form><br>
+            {% endif %}
+        {% endfor %}
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

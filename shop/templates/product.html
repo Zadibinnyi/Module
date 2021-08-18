@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+        <p>{{ object.name }}</p> 
+        <p>Описание: {{ object.descriptions }}</p> 
+        <p>Цена: {{ object.price }}</p> 
+        {% if object.quantity > 0 %}
+            Количество на складе: {{ object.quantity }}
+            <form method="post" action="{% url 'buy_product' object.pk %}">
+                {% csrf_token %}
+                {{ form }}
+                <button type="submit" value="Buy" class="btn btn-success">Купить</button>
+            </form>
+        {% endif %}
+        {% if message %}
+            <p>{{message}}</p>
+        {% endif %}
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

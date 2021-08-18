@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div>
+    {% for obj in object_list %}
+    <div>
+        {% if user.is_superuser %}
+            <p>{{ obj.purcase.user }}</p><p>{{ obj.purcase.product }}</p><p>{{ obj.purcase.quantity }} </p>
+            <form action="{% url 'confirm' obj.purcase.pk %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="obj.purcase.pk" value="{{ obj.purcase.pk }}"/>
+                <input type="submit" value="Принять">
+              </form>
+            <form method="post" action="{% url 'return-delete' obj.pk %}">
+                {% csrf_token %}
+                <input type="submit" value="Отклонить">
+            </form>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

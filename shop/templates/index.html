@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div>
+    {% for obj in page_obj %}
+    <div class="list">
+        <a href="{% url 'about' obj.pk %}"> {{ obj.name }} </a> <br>
+        <p>Описание: {{ obj.descriptions }}</p>
+        <p>Цена: {{ obj.price }}</p>
+        <p>Количество: {{ obj.quantity }}</p>
+        {% if user.is_superuser %}                      
+            <a href="{% url 'update_product' obj.pk%}">Изменить товар</a>
+        {% endif %}
+    </div>
+        {% endfor %}
+        <div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; Первая</a>
+            <a href="?page={{ page_obj.previous_page_number }}">Предыдущая</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">Следующая</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">Последняя &raquo;</a>
+        {% endif %}
+    </span>
+        </div>
+</div>
+{% endblock %}
